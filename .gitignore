@@ -1,0 +1,53 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# IDE / Editor folders
+.idea/
+.vscode/
+.DS_Store
+
+# Environments
+venv/
+env/
+.env
+.venv
+
+# Jupyter Notebooks
+.ipynb_checkpoints
+*.ipynb
+
+# Project Specific Data & Outputs
+data/
+outputs/
+checkpoints/
+logs/
+
+# Scratch / Export Files
+*.zip
+*.tar.gz
+*.csv
+*.log
+
+# Ignore loose temporary python scripts in root (like check_shapes.py) 
+# except the main execution scripts
+check_*.py
+scratch*.py
+test_*.py
+# Documents / paper artifacts
+*.pdf
+*.docx
+*.rtf
+*.html
+*.tex
+*.aux
+*.bbl
+*.blg
+*.out
+*.synctex.gz
+# Model artifacts
+*.pt
+*.pth
+*.bin
+*.safetensors

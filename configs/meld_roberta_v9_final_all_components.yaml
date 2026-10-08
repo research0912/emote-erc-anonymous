@@ -1,0 +1,74 @@
+experiment:
+  name: meld_roberta_v9_final_all_components
+  seed: 42
+  output_dir: outputs/meld_roberta_v9_final_all_components
+
+dataset:
+  name: meld
+  train_path: data/meld/MELD_train.txt
+  val_path: data/meld/MELD_dev.txt
+  test_path: data/meld/MELD_test.txt
+  context_window: 7
+  speaker_history_window: 8
+  use_gold_previous_emotion: false
+  max_length: 192
+  turn_max_length: 96
+  labels: [anger, disgust, fear, joy, neutral, sadness, surprise]
+
+model:
+  base_model: roberta-base
+  use_lora: true
+  lora_r: 8
+  lora_alpha: 16
+  lora_dropout: 0.1
+  lora_target_modules: [query, value]
+  use_bilstm: true
+  dialogue_flow_source: turn_level
+  lstm_hidden_size: 256
+  lstm_layers: 1
+  use_gnn: true
+  gnn_hidden_size: 256
+  gnn_layers: 3
+  gnn_self_weight: 1.0
+  gnn_adjacent_weight: 0.8
+  gnn_same_speaker_weight: 1.2
+  use_speaker_state: true
+  speaker_state_dim: 256
+  use_emotion_shift: true
+  emotion_shift_source: previous_text
+  shift_use_product: true
+  emotion_shift_dim: 64
+  use_cross_attention: true
+  cross_attention_heads: 4
+  use_dynamic_fusion: true
+  use_attention_fusion: true
+  attention_fusion_heads: 4
+  attention_fusion_dim: 768
+  use_mc_dropout: true
+  mc_dropout_samples: 20
+  use_contrastive: true
+  contrastive_proj_dim: 128
+  contrastive_temperature: 0.1
+  fusion_hidden_size: 256
+  dropout: 0.15
+
+training:
+  epochs: 10
+  batch_size: 8
+  grad_accum_steps: 2
+  learning_rate: 5.0e-6
+  head_learning_rate: 2.0e-5
+  weight_decay: 0.01
+  warmup_ratio: 0.06
+  max_grad_norm: 1.0
+  loss_type: class_balanced_focal
+  focal_gamma: 1.0
+  class_balanced_beta: 0.9997
+  label_smoothing: 0.05
+  class_weighted_loss: true
+  contrastive_weight: 0.02
+  fp16: true
+  save_every_steps: 2000
+  eval_every_steps: 2000
+  early_stopping_patience: 4
+  monitor_metric: macro_f1

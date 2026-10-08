@@ -1,0 +1,81 @@
+experiment:
+  name: meld_roberta_large_v10_ablate_no_cross_attention_a100_seed44
+  seed: 44
+  output_dir: outputs/meld_roberta_large_v10_ablate_no_cross_attention_a100_seed44
+
+dataset:
+  name: meld
+  train_path: data/meld/MELD_train.txt
+  val_path: data/meld/MELD_dev.txt
+  test_path: data/meld/MELD_test.txt
+  context_window: 7
+  speaker_history_window: 8
+  use_gold_previous_emotion: false
+  max_length: 256
+  turn_max_length: 96
+  labels: [anger, disgust, fear, joy, neutral, sadness, surprise]
+
+data_loader:
+  cache_tokenized: true
+  num_workers: 2
+  pin_memory: true
+  persistent_workers: true
+  prefetch_factor: 2
+
+model:
+  base_model: roberta-large
+  gradient_checkpointing: true
+  pooling_strategy: cls_last4_mean
+  use_lora: true
+  lora_r: 16
+  lora_alpha: 32
+  lora_dropout: 0.1
+  lora_target_modules: [query, value]
+  use_bilstm: true
+  dialogue_flow_source: turn_level
+  main_input_include_context_when_turn_level: true
+  lstm_hidden_size: 384
+  lstm_layers: 1
+  use_gnn: true
+  gnn_hidden_size: 384
+  gnn_layers: 2
+  gnn_self_weight: 1.0
+  gnn_adjacent_weight: 0.8
+  gnn_same_speaker_weight: 1.2
+  use_speaker_state: true
+  speaker_state_dim: 384
+  use_emotion_shift: true
+  emotion_shift_source: previous_text
+  reuse_turn_repr_for_previous: true
+  shift_use_product: true
+  emotion_shift_dim: 96
+  use_cross_attention: false
+  cross_attention_heads: 8
+  use_dynamic_fusion: true
+  use_attention_fusion: true
+  attention_fusion_heads: 8
+  attention_fusion_dim: 1024
+  use_contrastive: true
+  contrastive_proj_dim: 256
+  contrastive_temperature: 0.1
+  fusion_hidden_size: 512
+  dropout: 0.2
+
+training:
+  epochs: 11
+  batch_size: 8
+  grad_accum_steps: 2
+  learning_rate: 8.0e-6
+  head_learning_rate: 5.0e-5
+  weight_decay: 0.01
+  warmup_ratio: 0.08
+  max_grad_norm: 1.0
+  loss_type: refined_ce
+  refinement_alpha: 0.18
+  class_weighted_loss: false
+  contrastive_weight: 0.01
+  fp16: true
+  save_every_steps: 1000
+  eval_every_steps: 1000
+  early_stopping_patience: 4
+  monitor_metric: weighted_f1

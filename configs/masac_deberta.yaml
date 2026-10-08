@@ -1,0 +1,49 @@
+experiment:
+  name: masac_deberta_context_speaker_shift_xai
+  seed: 42
+  output_dir: outputs/masac_deberta
+
+dataset:
+  name: masac
+  train_path: data/masac/MASAC_trans_train.json
+  val_path: data/masac/MASAC_trans_val.json
+  test_path: data/masac/MASAC_trans_test.json
+  context_window: 15
+  speaker_history_window: 15
+  use_gold_previous_emotion: false
+  max_length: 320
+  labels: [anger, contempt, disgust, fear, joy, neutral, sadness, surprise]
+
+model:
+  base_model: microsoft/deberta-v3-base
+  use_lora: true
+  lora_r: 8
+  lora_alpha: 16
+  lora_dropout: 0.1
+  lora_target_modules: [query_proj, value_proj]
+  use_bilstm: true
+  lstm_hidden_size: 256
+  lstm_layers: 1
+  use_speaker_state: true
+  speaker_state_dim: 256
+  use_emotion_shift: true
+  emotion_shift_source: previous_text
+  emotion_shift_dim: 64
+  fusion_hidden_size: 256
+  dropout: 0.2
+
+training:
+  epochs: 5
+  batch_size: 8
+  grad_accum_steps: 1
+  learning_rate: 2.0e-5
+  head_learning_rate: 1.0e-4
+  weight_decay: 0.01
+  warmup_ratio: 0.1
+  max_grad_norm: 1.0
+  class_weighted_loss: true
+  fp16: true
+  save_every_steps: 2000
+  eval_every_steps: 2000
+  early_stopping_patience: 4
+  monitor_metric: macro_f1
